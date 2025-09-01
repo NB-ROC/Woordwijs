@@ -5,7 +5,7 @@ De applicatie is bedoeld als leeropdracht en bevat de basisfunctionaliteit van e
 
 ## Belangrijk
 - Kijk in de [Wiki](./wiki) voor uitgebreide projectdocumentatie en overdrachtsinformatie.
-- voor de Designs kijk in [design]([./design](https://www.figma.com/design/6qKLhbVgWWPQlALpwE4eVf/Untitled?node-id=0-1&t=kY7BBzc2xNpbSL0f-1)) voor de juiste bestanden.
+- voor de Designs kijk in [design](https://www.figma.com/design/6qKLhbVgWWPQlALpwE4eVf/Untitled?node-id=0-1&t=kY7BBzc2xNpbSL0f-1)) voor de juiste bestanden.
 
 
 ## Features
