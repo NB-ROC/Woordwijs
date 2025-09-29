@@ -18,6 +18,8 @@ db.connect((err) => {
   else console.log("Verbonden met MySQL!");
 });
 
+// --- Controllers ---
+
 // GET all words
 app.get("/api/words", (req, res) => {
   db.query("SELECT * FROM words", (err, results) => {
@@ -28,7 +30,7 @@ app.get("/api/words", (req, res) => {
 
 // POST new word
 app.post("/api/words", (req, res) => {
-  const { word, description } = req.body; // description = array
+  const { word, description } = req.body;
   if (!word || !description || !Array.isArray(description)) {
     return res.status(400).json({ error: "Ongeldige data" });
   }
@@ -47,6 +49,37 @@ app.post("/api/words", (req, res) => {
 app.delete("/api/words/:id", (req, res) => {
   const { id } = req.params;
   db.query("DELETE FROM words WHERE id = ?", [id], (err) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ success: true });
+  });
+});
+
+// PUT / update a word
+app.put("/api/words/:id", (req, res) => {
+  const { id } = req.params;
+  const { word, description } = req.body;
+
+  if (!word && !description) {
+    return res.status(400).json({ error: "Geen data om te updaten" });
+  }
+
+  let updates = [];
+  let params = [];
+
+  if (word) {
+    updates.push("word = ?");
+    params.push(word);
+  }
+  if (description) {
+    updates.push("description = ?");
+    params.push(JSON.stringify(description));
+  }
+
+  params.push(id);
+
+  const sql = `UPDATE words SET ${updates.join(", ")} WHERE id = ?`;
+
+  db.query(sql, params, (err) => {
     if (err) return res.status(500).json({ error: err });
     res.json({ success: true });
   });
