@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "../App.css";
-
+import { db } from "../config/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 function Game() {
   const [AllWords, setAllWords] = useState([]);
@@ -9,38 +10,46 @@ function Game() {
   useEffect(() => {
     const getWords = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/words");
-        const data = await res.json();
-        setAllWords(data);
-        if (data.length > 0) {
-          setWordToDescribe(data[Math.floor(Math.random() * data.length)]);
+        // Firestore collection ophalen
+        const snapshot = await getDocs(collection(db, "Words"));
+
+        const words = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setAllWords(words);
+
+        if (words.length > 0) {
+          const random = words[Math.floor(Math.random() * words.length)];
+          setWordToDescribe(random);
         }
       } catch (err) {
-        console.error("Fout bij ophalen van woorden:", err);
+        console.error("Fout bij ophalen van woorden uit Firestore:", err);
       }
     };
+
     getWords();
   }, []);
 
   const CheckIfCorrect = (e) => {
     e.preventDefault();
-
-    if (!Array.isArray(WordToDescribe.description)) {
-      alert("Beschrijving is niet beschikbaar");
-      return;
-    }
+    if (!WordToDescribe) return;
 
     const guess = e.target.chosenWord.value.toLowerCase();
-    const descriptions = WordToDescribe.description.map((d) => d.toLowerCase());
+    const descriptions = WordToDescribe.Descriptions.map((d) =>
+      d.toLowerCase()
+    );
 
     if (descriptions.includes(guess)) {
       alert("Goed!");
-      const nextWord = AllWords[Math.floor(Math.random() * AllWords.length)];
+
+      const nextWord =
+        AllWords[Math.floor(Math.random() * AllWords.length)];
+
       setWordToDescribe(nextWord);
     } else {
-      alert("Helaas, probeer nog eens!");
-      console.log("Foute gok:", guess);
-      console.log("Beschrijvingen:", descriptions);
+      alert("Helaas, probeer opnieuw!");
     }
 
     e.target.chosenWord.value = "";
@@ -51,8 +60,9 @@ function Game() {
   return (
     <div id="GameContainer">
       <div id="WordContainer">
-        <p id="WordToDescribe">{WordToDescribe.word}</p>
+        <p id="WordToDescribe">{WordToDescribe.Word}</p>
       </div>
+
       <form onSubmit={CheckIfCorrect}>
         <input
           type="text"
