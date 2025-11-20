@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; width: 250px; text-align: center; }
+    h1 { color: #2a9d8f; font-size: 18px; }
+    input { padding: 5px; width: 80%; margin: 5px 0; }
+    button { padding: 5px 10px; margin: 5px; cursor: pointer; }
+    p { margin: 5px 0; }
+    #coins { font-weight: bold; color: gold; }
+  </style>
+</head>
+<body>
+  <h1>Word Quiz Game</h1>
+  <p id="word"></p>
+  <input type="text" id="answer" placeholder="Typ de betekenis">
+  <br>
+  <button id="submit">Check</button>
+  <button id="next" style="display:none;">Volgend woord</button>
+  <p id="feedback"></p>
+  <p>Munten: <span id="coins">0</span></p>
+
+  <script src="popup.js"></script>
+</body>
+</html>
