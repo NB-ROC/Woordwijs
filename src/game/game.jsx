@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import "../App.css";
+import "./Game.css";
 import { db } from "../config/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import logo from "../img/roc-nijmegen-logo-2024.jpg";
 
 function Game() {
   const [AllWords, setAllWords] = useState([]);
@@ -58,6 +59,10 @@ function Game() {
   if (!WordToDescribe) return <p>Laden...</p>;
 
   return (
+      <>
+    <div id="Header">
+        <img src={logo} alt="ROC Nijmegen logo" />
+    </div>
     <div id="GameContainer">
       <div id="WordContainer">
         <p id="WordToDescribe">{WordToDescribe.Word}</p>
@@ -73,6 +78,7 @@ function Game() {
         <button type="submit">Guess</button>
       </form>
     </div>
+      </>
   );
 }
 
