@@ -1,55 +1,78 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getWords,
+  addCoins,
+  getCoins,
+  saveAnswer,
+  getHistory,
+} from "../services/wordService";
+import { auth } from "../firebase";
 import "../App.css";
 import { db } from "../config/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
 function Game() {
-  const [AllWords, setAllWords] = useState([]);
+  const [allWords, setAllWords] = useState([]);
   const [WordToDescribe, setWordToDescribe] = useState(null);
+  const [coins, setCoins] = useState(0);
+  const [history, setHistory] = useState([]);
+  const navigate = useNavigate();
 
+  // Check of de user is ingelogd
   useEffect(() => {
-    const getWords = async () => {
-      try {
-        // Firestore collection ophalen
-        const snapshot = await getDocs(collection(db, "Words"));
+    if (!auth.currentUser) {
+      navigate("/login"); // redirect naar login als niet ingelogd
+    }
+  }, [navigate]);
 
-        const words = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+  // Woorden ophalen, coins en geschiedenis
+  useEffect(() => {
+    const fetchData = async () => {
+      const wordsData = await getWords();
+      setAllWords(wordsData);
+      if (wordsData.length > 0)
+        setWordToDescribe(wordsData[Math.floor(Math.random() * wordsData.length)]);
+      const currentCoins = await getCoins();
+      setCoins(currentCoins);
 
-        setAllWords(words);
-
-        if (words.length > 0) {
-          const random = words[Math.floor(Math.random() * words.length)];
-          setWordToDescribe(random);
-        }
-      } catch (err) {
-        console.error("Fout bij ophalen van woorden uit Firestore:", err);
-      }
+      const historyData = await getHistory();
+      setHistory(historyData);
     };
-
-    getWords();
+    fetchData();
   }, []);
 
-  const CheckIfCorrect = (e) => {
+  // Kies volgend woord
+  const nextWord = () => {
+    if (allWords.length === 0) return;
+    const word = allWords[Math.floor(Math.random() * allWords.length)];
+    setWordToDescribe(word);
+  };
+
+  // Check het antwoord en sla op
+  const CheckIfCorrect = async (e) => {
     e.preventDefault();
-    if (!WordToDescribe) return;
+    if (!WordToDescribe || !Array.isArray(WordToDescribe.Descriptions)) return;
 
-    const guess = e.target.chosenWord.value.toLowerCase();
-    const descriptions = WordToDescribe.Descriptions.map((d) =>
-      d.toLowerCase()
-    );
+    const guess = e.target.chosenWord.value.trim().toLowerCase();
+    const descriptions = WordToDescribe.Descriptions.map((d) => d.toLowerCase());
+    const isCorrect = descriptions.includes(guess);
 
-    if (descriptions.includes(guess)) {
+    // Sla antwoord op in Firebase
+    await saveAnswer(WordToDescribe.Word, guess, isCorrect);
+
+    // Update geschiedenis
+    const historyData = await getHistory();
+    setHistory(historyData);
+
+    if (isCorrect) {
       alert("Goed!");
-
-      const nextWord =
-        AllWords[Math.floor(Math.random() * AllWords.length)];
-
-      setWordToDescribe(nextWord);
+      await addCoins(10); // 10 coins toevoegen
+      const updatedCoins = await getCoins();
+      setCoins(updatedCoins);
+      nextWord();
     } else {
-      alert("Helaas, probeer opnieuw!");
+      alert("Helaas, probeer nog eens!");
     }
 
     e.target.chosenWord.value = "";
@@ -62,6 +85,7 @@ function Game() {
       <div id="WordContainer">
         <p id="WordToDescribe">{WordToDescribe.Word}</p>
       </div>
+      <p>Coins: {coins}</p>
 
       <form onSubmit={CheckIfCorrect}>
         <input
@@ -72,6 +96,20 @@ function Game() {
         />
         <button type="submit">Guess</button>
       </form>
+
+      <h2>Jouw antwoorden</h2>
+      {history.length === 0 ? (
+        <p>Je hebt nog geen woorden geraden.</p>
+      ) : (
+        <ul>
+          {history.map((item, index) => (
+            <li key={index}>
+              <strong>{item.word}</strong> — {item.answer}{" "}
+              {item.correct ? "✅" : "❌"}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
