@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { getWords, addWord, deleteWord, updateWord } from "../services/wordService";
-import "./Admin.css";
+import "./admin.css";
+import { db } from "../config/firebase";
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore";
+import logo from "../img/roc-nijmegen-logo-2024.jpg";
 
 function Admin() {
   const [allWords, setAllWords] = useState([]);
@@ -53,15 +56,22 @@ function Admin() {
   return (
     <>
       <div className="headers bg-white w-screen">
-        <img src="src/img/Logo van ROC-Nijmegen.svg" alt="RocLogo" className="roclogo"/>
+        <img src="src/img/Logo van ROC-Nijmegen.svg" alt="RocLogo" className="roclogo" />
       </div>
 
       <div className="diagonal-split">
         <h1 className="roct">Nieuw woord toevoegen</h1>
 
         <form onSubmit={ChangeDescAmount}>
-          <input className="text-white bg-[#6c6bc4] border-none rounded-2xl p-4 w-60 text-center font-bold" placeholder="Aantal beschrijvingen" name="DescAmount" type="number"/>
-          <div className="margintop"><button type="submit">Bevestig aantal</button></div>
+          <input
+            className="text-white bg-[#6c6bc4] border-none rounded-2xl p-4 w-60 text-center font-bold"
+            placeholder="Aantal beschrijvingen"
+            name="DescAmount"
+            type="number"
+          />
+          <div className="margintop">
+            <button type="submit">Bevestig aantal</button>
+          </div>
         </form>
 
         <form onSubmit={addItem}>
