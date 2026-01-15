@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>WoordWijs Quiz</title>
+</head>
+<body>
+  <div id="loginView">
+    <input id="email" placeholder="Email" type="email">
+    <input id="password" placeholder="Wachtwoord" type="password">
+    <button id="loginBtn">Login</button>
+    <button id="registerBtn">Register</button>
+    <div id="loginError"></div>
+  </div>
+
+  <div id="quizView" hidden>
+    <div>Coins: <span id="coins">0</span></div>
+    <div id="word"></div>
+    <input id="answer" placeholder="Jouw antwoord">
+    <button id="submit">Submit</button>
+    <div id="feedback"></div>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <script type="module" src="dist/popup.js"></script>
+</body>
+</html>
