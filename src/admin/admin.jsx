@@ -36,6 +36,7 @@ function Admin() {
       inputs.push(
         <input
           key={i}
+          type="text"
           name={`description${i}`}
           placeholder={`Beschrijving ${i + 1}`}
           className="text-white bg-[#6c6bc4] border-none rounded-2xl m-2 p-4 w-50 text-center font-bold"
