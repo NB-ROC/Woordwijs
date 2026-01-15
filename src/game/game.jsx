@@ -33,7 +33,9 @@ function Game() {
       const wordsData = await getWords();
       setAllWords(wordsData);
       if (wordsData.length > 0)
-        setWordToDescribe(wordsData[Math.floor(Math.random() * wordsData.length)]);
+        setWordToDescribe(
+          wordsData[Math.floor(Math.random() * wordsData.length)]
+        );
       const currentCoins = await getCoins();
       setCoins(currentCoins);
 
@@ -56,7 +58,9 @@ function Game() {
     if (!WordToDescribe || !Array.isArray(WordToDescribe.Descriptions)) return;
 
     const guess = e.target.chosenWord.value.trim().toLowerCase();
-    const descriptions = WordToDescribe.Descriptions.map((d) => d.toLowerCase());
+    const descriptions = WordToDescribe.Descriptions.map((d) =>
+      d.toLowerCase()
+    );
     const isCorrect = descriptions.includes(guess);
 
     // Sla antwoord op in Firebase
@@ -82,41 +86,41 @@ function Game() {
   if (!WordToDescribe) return <p>Laden...</p>;
 
   return (
-      <>
-    <div id="Header">
+    <>
+      <div id="Header">
         <img src={logo} alt="ROC Nijmegen logo" />
-    </div>
-    <div id="GameContainer">
-      <div id="WordContainer">
-        <p id="WordToDescribe">{WordToDescribe.Word}</p>
       </div>
-      <p>Coins: {coins}</p>
+      <div id="GameContainer">
+        <div id="WordContainer">
+          <p id="WordToDescribe">{WordToDescribe.word}</p>
+        </div>
+        <p>Coins: {coins}</p>
 
-      <form onSubmit={CheckIfCorrect}>
-        <input
-          type="text"
-          name="chosenWord"
-          id="WordInput"
-          autoComplete="off"
-        />
-        <button type="submit">Guess</button>
-      </form>
+        <form onSubmit={CheckIfCorrect}>
+          <input
+            type="text"
+            name="chosenWord"
+            id="WordInput"
+            autoComplete="off"
+          />
+          <button type="submit">Guess</button>
+        </form>
 
-      <h2>Jouw antwoorden</h2>
-      {history.length === 0 ? (
-        <p>Je hebt nog geen woorden geraden.</p>
-      ) : (
-        <ul>
-          {history.map((item, index) => (
-            <li key={index}>
-              <strong>{item.word}</strong> — {item.answer}{" "}
-              {item.correct ? "✅" : "❌"}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-      </>
+        <h2>Jouw antwoorden</h2>
+        {history.length === 0 ? (
+          <p>Je hebt nog geen woorden geraden.</p>
+        ) : (
+          <ul>
+            {history.map((item, index) => (
+              <li key={index}>
+                <strong>{item.word}</strong> — {item.answer}{" "}
+                {item.correct ? "✅" : "❌"}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
   );
 }
 
