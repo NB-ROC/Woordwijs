@@ -1,0 +1,22 @@
+{
+  "name": "WoordWijs",
+  "description": "Woord quiz spel",
+  "version": "1.5",
+  "manifest_version": 3,
+
+  "action": {
+    "default_popup": "hello.html"
+  },
+
+"background": {
+  "service_worker": "background.js",
+  "type": "module"
+},
+
+  "permissions": ["storage", "alarms"],
+
+  "host_permissions": [
+    "https://firestore.googleapis.com/*",
+    "https://www.googleapis.com/*"
+  ]
+}
