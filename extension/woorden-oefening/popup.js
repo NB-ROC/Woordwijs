@@ -2,7 +2,7 @@
 //
 // Gebruikt dezelfde Firebase-auth en dezelfde services als de website, zodat
 // login, coins en geschiedenis altijd gelijk zijn aan woordwijs.nl.
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../src/firebase.js";
 import {
   getCoins,
@@ -11,6 +11,7 @@ import {
   saveUserProfile,
 } from "../../src/services/wordService.js";
 import logo from "../../src/img/roc-nijmegen-logo-2024.jpg";
+import { koppelLogin } from "./login.js";
 
 const $ = (id) => document.getElementById(id);
 $("logo").src = logo;
@@ -80,23 +81,7 @@ onAuthStateChanged(auth, (user) => {
   else toonLogin();
 });
 
-async function inloggen() {
-  $("loginFout").hidden = true;
-  const email = $("email").value.trim();
-  const password = $("password").value;
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch {
-    $("loginFout").textContent = "Inloggen mislukt. Controleer je gegevens.";
-    $("loginFout").hidden = false;
-  }
-}
-
-$("loginForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  inloggen();
-});
+koppelLogin($("loginForm"));
 
 $("oefenNu").addEventListener("click", async () => {
   await stuur({ type: "nu-oefenen" });

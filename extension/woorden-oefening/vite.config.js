@@ -13,6 +13,14 @@ export default defineConfig({
   // Chrome-extensie heeft geen webserver-root, dus root-relatieve paden
   // zijn onbetrouwbaar.
   base: "./",
+  resolve: {
+    alias: [
+      // De gewone Firebase-login laadt scripts van apis.google.com, wat
+      // Chrome in extensies blokkeert (Manifest V3). De web-extension-build
+      // doet dat niet. Dit geldt ook voor de gedeelde src/firebase.js.
+      { find: /^firebase\/auth$/, replacement: "firebase/auth/web-extension" },
+    ],
+  },
   publicDir: fileURLToPath(new URL("./public", import.meta.url)),
   build: {
     outDir: fileURLToPath(new URL("../../dist-extension", import.meta.url)),

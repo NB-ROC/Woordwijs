@@ -15,6 +15,7 @@ import {
   saveUserProfile,
 } from "../../src/services/wordService.js";
 import logo from "../../src/img/roc-nijmegen-logo-2024.jpg";
+import { koppelLogin } from "./login.js";
 
 const $ = (id) => document.getElementById(id);
 $("logo").src = logo;
@@ -97,16 +98,15 @@ $("sluiten").addEventListener("click", async () => {
   }
 });
 
+koppelLogin($("loginForm"));
+
 onAuthStateChanged(auth, (user) => {
   const ingelogd = Boolean(user);
-  $("uitgelogd").hidden = ingelogd;
-  $("invoer").hidden = !ingelogd;
-  $("verstuur").hidden = !ingelogd;
+  $("loginForm").hidden = ingelogd;
+  $("spel").hidden = !ingelogd;
 
   if (ingelogd) {
     saveUserProfile(user);
     initOefening();
-  } else {
-    $("woord").textContent = "—";
   }
 });

@@ -67,14 +67,18 @@ en Uitloggen.
    ```
 2. Ga in Chrome naar `chrome://extensions` en zet rechtsboven **Ontwikkelaarsmodus** aan.
 3. Klik op **Uitgepakte extensie laden** en kies de map `dist-extension/`.
-4. Klik op het extensie-icoon in de werkbalk en log in met je Woordwijs-account.
+4. Direct na het installeren opent het oefenvenster: log daar in met je
+   Woordwijs-account. Later kan dat ook via het extensie-icoon (puzzelstukje in
+   de werkbalk → Woordwijs Oefening; klik op de punaise om hem vast te zetten).
 
 Na een wijziging in de code: opnieuw `npm run build:extension` en in
 `chrome://extensions` bij de extensie op **Herladen** klikken.
 
 > De extensie moet altijd eerst gebouwd worden. Chrome-extensies mogen geen
 > externe scripts laden, dus Vite bundelt de Firebase-SDK en de gedeelde code
-> uit `src/` mee.
+> uit `src/` mee. Daarbij wordt `firebase/auth` vervangen door
+> `firebase/auth/web-extension`: de gewone versie laadt scripts van
+> `apis.google.com`, waardoor inloggen in een extensie niet werkt.
 
 ### Gebruik
 
@@ -94,8 +98,9 @@ Op het ingestelde interval opent het oefenvenster vanzelf, met een melding.
 | `public/manifest.json` | Manifest V3: rechten `alarms`, `notifications`, `storage` |
 | `public/background.js` | Service worker: timer (`chrome.alarms`) die het oefenvenster opent |
 | `popup.html/js/css` | Menu onder het extensie-icoon: login, streak, coins, instellingen |
-| `oefening.html/js/css` | Oefenvenster, zelfde spel als `/game` |
-| `vite.config.js` | Bouwt de extensie naar `dist-extension/` |
+| `oefening.html/js/css` | Oefenvenster, zelfde spel als `/game`; toont een inlogformulier als je niet bent ingelogd |
+| `login.js` | Inlogformulier, gedeeld door popup en oefenvenster |
+| `vite.config.js` | Bouwt de extensie naar `dist-extension/` en gebruikt `firebase/auth/web-extension` |
 
 `popup.js` en `oefening.js` importeren `src/firebase.js` en
 `src/services/wordService.js`, dus de spellogica staat maar op één plek. Alleen

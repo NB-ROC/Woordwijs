@@ -12,25 +12,40 @@
     </header>
 
     <main class="pagina">
-      <p class="uitgelogd" id="uitgelogd" hidden>
-        Je bent niet ingelogd. Log in via het extensie-icoon in de werkbalk.
-      </p>
-
-      <h1 class="pagina-titel">Leg het volgende woord uit:</h1>
-
-      <div class="kaart woordkaart" id="woord">&hellip;</div>
-
-      <form class="kaart invoerkaart" id="invoer">
-        <label class="invoerkaart__kop" for="antwoord">type uw woord beschrijving</label>
-        <textarea id="antwoord" autocomplete="off"></textarea>
+      <form class="kaart login" id="loginForm" hidden>
+        <div class="login__kop">
+          <h1 class="login__titel">Welkom bij Woordwijs</h1>
+          <p class="login__sub">Log in met je ROC-account</p>
+        </div>
+        <label class="veld">
+          <span>Email</span>
+          <input type="email" id="email" autocomplete="username" placeholder="naam@roc-nijmegen.nl" required />
+        </label>
+        <label class="veld">
+          <span>Wachtwoord</span>
+          <input type="password" id="password" autocomplete="current-password" placeholder="••••••••" required />
+        </label>
+        <p class="fout" id="loginFout" hidden></p>
+        <button id="inlogBtn" class="knop login__knop" type="submit">Inloggen</button>
       </form>
 
-      <div class="acties">
-        <button type="button" class="knop knop--licht" id="sluiten">Sluiten</button>
-        <button type="submit" class="knop" form="invoer" id="verstuur">Verstuur</button>
-      </div>
+      <section class="spel" id="spel" hidden>
+        <h1 class="pagina-titel">Leg het volgende woord uit:</h1>
 
-      <p class="feedback" id="feedback"></p>
+        <div class="kaart woordkaart" id="woord">&hellip;</div>
+
+        <form class="kaart invoerkaart" id="invoer">
+          <label class="invoerkaart__kop" for="antwoord">type uw woord beschrijving</label>
+          <textarea id="antwoord" autocomplete="off"></textarea>
+        </form>
+
+        <div class="acties">
+          <button type="button" class="knop knop--licht" id="sluiten">Sluiten</button>
+          <button type="submit" class="knop" form="invoer" id="verstuur">Verstuur</button>
+        </div>
+
+        <p class="feedback" id="feedback"></p>
+      </section>
     </main>
 
     <script type="module" src="./oefening.js"></script>
