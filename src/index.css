@@ -1,110 +1,19 @@
-
-
-/*Standaard roc kleuren*/
-.roct {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #3c2a4d;
-}
-
-.bg-w {
-  background-color: #ffffff;
-}
-
-.bg-lp {
-  background-color: #f0f0f7;
-}
-
-.bg-p {
-  background-color: #6e6eb4;
-}
-
-.roct {
-  color: #402e56;
-}
-
-/*header*/
-.headers {
-  height: 15vh;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 1);
-}
-
-.roclogo {
-  height: 90px;
-  padding-left: 1rem;
-}
-
-/*background*/
-.diagonal-split {
-    width: 100vw;
-    background: linear-gradient(170deg, #f1f1fb 50%, white 50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-}
-
-/*woord inveor*/
-
-#WordInput {
-  width: 90vw;
-  max-width: 800px;
-  border: none;
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-  padding: 2rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: white;
-  background-color: #6c6bc4; /* paarse bovenbalk */
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  margin-bottom: -2px;
-}
-
-#WordInput::placeholder {
-  color: white;
-}
-
-#WordInput:focus {
-  outline: none;
-}
-
-.wordkaart {
-  height: 150px;
-  width: 300px;
-  background-color: #6c6bc4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 4rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.wordkaart input {
-  color: #3c2a4d; /* donkere letters zichtbaar op witte kaart */
-  background-color: transparent;
-}
-/*random css*/
-.margintop {
-  margin-top: 60px;
-}
-
-/*overige standaard css*/
+/* ==================== ROC Nijmegen huisstijl ==================== */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --roc-paars: #402e56;      /* donkerpaars: tekst en logo */
+  --roc-lila: #6e6eb4;       /* lichtpaars: balken en knoppen */
+  --roc-lavendel: #f0f0f7;   /* achtergrond bovenkant */
+  --roc-wit: #ffffff;
+  --roc-grijs: #d9d9d9;      /* admin-tabel */
+  --roc-lijn: #8c8c8c;
+  --schaduw: 0 6px 24px rgba(64, 46, 86, 0.1);
+
+  font-family: "Montserrat", system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--roc-paars);
+  background-color: var(--roc-wit);
+  color-scheme: light;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -112,60 +21,429 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* ==================== Header ==================== */
+.site-header {
+  position: relative;
+  z-index: 10;
+  height: 100px;
+  padding: 0 2.5rem;
   display: flex;
-  place-items: center;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--roc-wit);
+  box-shadow: 0 4px 18px rgba(64, 46, 86, 0.08);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.site-header__logo {
+  height: 70px;
+  width: auto;
+  display: block;
 }
 
-button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #402E56;
-    cursor: pointer;
-    transition: border-color 0.25s;
-    display: inline-block;
+.mijn-roc {
+  position: relative;
 }
 
-button:hover {
-  border-color: #646cff;
+.pill {
+  border: 1px solid var(--roc-lila);
+  border-radius: 999px;
+  background: var(--roc-wit);
+  color: var(--roc-lila);
+  padding: 0.3rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.pill:hover,
+.pill[aria-expanded="true"] {
+  background: var(--roc-lila);
+  color: var(--roc-wit);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.mijn-roc__menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  min-width: 220px;
+  padding: 0.5rem;
+  background: var(--roc-wit);
+  border-radius: 10px;
+  box-shadow: var(--schaduw);
+  display: flex;
+  flex-direction: column;
+}
+
+.mijn-roc__email {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  overflow-wrap: anywhere;
+}
+
+.mijn-roc__item {
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.mijn-roc__item:hover {
+  background: var(--roc-lavendel);
+}
+
+/* ==================== Pagina met diagonale achtergrond ==================== */
+.pagina {
+  position: relative;
+  min-height: calc(100vh - 100px);
+  padding: 2.5rem 1rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.pagina::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 70vh;
+  background: var(--roc-lavendel);
+  clip-path: polygon(0 0, 100% 0, 100% 72%, 0 100%);
+  z-index: -1;
+}
+
+.pagina-titel {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ==================== Kaarten ==================== */
+.kaart {
+  background: var(--roc-wit);
+  border-radius: 10px;
+  box-shadow: var(--schaduw);
+}
+
+.woordkaart {
+  width: min(310px, 100%);
+  min-height: 130px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.invoerkaart {
+  width: min(740px, 100%);
+  overflow: hidden;
+}
+
+.invoerkaart__kop {
+  display: block;
+  margin: 0;
+  padding: 0.35rem 1rem;
+  background: var(--roc-lila);
+  color: var(--roc-wit);
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.invoerkaart textarea,
+.invoerkaart input {
+  display: block;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: vertical;
+  padding: 1rem 1.25rem;
+  background: var(--roc-wit);
+  font-size: 1.125rem;
+}
+
+.invoerkaart textarea {
+  min-height: 175px;
+}
+
+.invoerkaart input.invoerkaart__kop {
+  background: var(--roc-lila);
+  color: var(--roc-wit);
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  resize: none;
+}
+
+.invoerkaart input + .invoerkaart__kop {
+  border-top: 1px solid var(--roc-lavendel);
+}
+
+/* ==================== Login ==================== */
+.pagina--midden {
+  justify-content: center;
+}
+
+.login {
+  width: min(420px, 100%);
+  padding: 2rem 2rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  border-top: 6px solid var(--roc-lila);
+}
+
+.login__kop {
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.login__titel {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.login__sub {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.veld {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.veld__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.veld input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid #dcdcea;
+  border-radius: 8px;
+  background: var(--roc-lavendel);
+  font-size: 1rem;
+  transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+}
+
+.veld input::placeholder {
+  color: var(--roc-paars);
+  opacity: 0.35;
+}
+
+.veld input:focus {
+  outline: none;
+  border-color: var(--roc-lila);
+  background: var(--roc-wit);
+  box-shadow: 0 0 0 3px rgba(110, 110, 180, 0.2);
+}
+
+.login__fout {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #b3261e;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.login__knop {
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 0.8rem;
+  font-size: 1rem;
+}
+
+/* ==================== Knoppen ==================== */
+.knop {
+  border: none;
+  border-radius: 999px;
+  background: var(--roc-lila);
+  color: var(--roc-wit);
+  padding: 0.6rem 2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.knop:hover {
+  background: var(--roc-paars);
+}
+
+.knop:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.knop--licht {
+  background: var(--roc-wit);
+  color: var(--roc-paars);
+  box-shadow: var(--schaduw);
+}
+
+.knop--licht:hover {
+  background: var(--roc-lavendel);
+}
+
+.link-knop {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--roc-lila);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link-knop:hover {
+  color: var(--roc-paars);
+  text-decoration: underline;
+}
+
+.feedback {
+  max-width: 740px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.feedback--fout {
+  color: #b3261e;
+}
+
+.feedback--goed {
+  color: #2e7d32;
+}
+
+/* ==================== Admin-tabel ==================== */
+.admin {
+  width: min(600px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin__titel {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  color: #000;
+}
+
+.admin__balk {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.tabel {
+  min-height: 590px;
+  background:
+    linear-gradient(var(--roc-lijn), var(--roc-lijn)) center / 1px 100% no-repeat,
+    var(--roc-grijs);
+  color: #000;
+}
+
+.tabel__kop,
+.tabel__rij {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--roc-lijn);
+  background: transparent;
+  padding: 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.tabel__kop--los {
+  border-bottom: none;
+  background: none;
+  color: #000;
+}
+
+.tabel__kop > span,
+.tabel__rij > span {
+  padding: 0.4rem 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+button.tabel__rij {
+  cursor: pointer;
+}
+
+button.tabel__rij:hover,
+button.tabel__rij:focus-visible {
+  background: rgba(110, 110, 180, 0.18);
+  outline: none;
+}
+
+.tabel__rij--antwoord {
+  color: var(--roc-paars);
+}
+
+.tabel__leeg {
+  padding: 1rem;
+  text-align: center;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .site-header {
+    height: 80px;
+    padding: 0 1rem;
   }
 
-  a:hover {
-    color: #747bff;
+  .site-header__logo {
+    height: 54px;
   }
 
-  button {
-    background-color: #f9f9f9;
+  .pagina {
+    min-height: calc(100vh - 80px);
+  }
+
+  .invoerkaart__kop {
+    font-size: 1.15rem;
   }
 }

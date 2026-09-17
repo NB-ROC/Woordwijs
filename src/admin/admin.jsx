@@ -1,162 +1,115 @@
-// Admin.jsx
+// Admin.jsx — overzicht van studenten met hun streak. Klik op een student
+// om diens woorden en antwoorden te zien.
 import { useState, useEffect } from "react";
-import {
-  getWords,
-  addWord,
-  deleteWord,
-  updateWord,
-} from "../services/wordService";
-import "./admin.css";
-import logo from "../img/roc-nijmegen-logo-2024.jpg";
+import { Link } from "react-router-dom";
+import { getUsers, getHistoryForUser } from "../services/wordService";
+
+const dagen = (n) => `${n} ${n === 1 ? "dag" : "dagen"}`;
 
 function Admin() {
-  const [allWords, setAllWords] = useState([]);
-  const [editedWords, setEditedWords] = useState({});
-  const [editedDescriptions, setEditedDescriptions] = useState({});
-  const [descriptionCount, setDescriptionCount] = useState(1);
-
-  // Woorden ophalen
-  const loadWords = async () => {
-    const data = await getWords();
-    setAllWords(data);
-  };
+  const [users, setUsers] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [history, setHistory] = useState(null);
+  const [fout, setFout] = useState("");
 
   useEffect(() => {
-    loadWords();
+    getUsers()
+      .then(setUsers)
+      .catch((err) => {
+        console.error(err);
+        setFout("Studenten konden niet geladen worden.");
+        setUsers([]);
+      });
   }, []);
 
-  // Aantal beschrijvingen aanpassen bij toevoegen nieuw woord
-  const ChangeDescAmount = (e) => {
-    e.preventDefault();
-    setDescriptionCount(Number(e.target.DescAmount.value) || 1);
+  const openUser = async (user) => {
+    setSelected(user);
+    setHistory(null);
+    try {
+      setHistory(await getHistoryForUser(user.id));
+    } catch (err) {
+      console.error(err);
+      setHistory([]);
+    }
   };
 
-  const renderNewWordDescriptions = () =>
-    [...Array(descriptionCount)].map((_, i) => (
-      <input
-        key={i}
-        name={`description${i}`}
-        placeholder={`Beschrijving ${i + 1}`}
-        className="text-white bg-[#6c6bc4] border-none rounded-2xl m-2 p-4 w-50 text-center font-bold"
-      />
-    ));
-
-  // Nieuw woord toevoegen
-  const addItem = async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const word = form.Word.value.trim();
-    const descriptions = Array.from(form.elements)
-      .filter((el) => el.name.includes("description") && el.value.trim() !== "")
-      .map((el) => el.value.trim());
-
-    if (!word || descriptions.length === 0) return;
-
-    await addWord(word, descriptions); // Voeg toe via service
-    form.reset();
-    setDescriptionCount(1);
-    loadWords();
-  };
-
-  // Woord verwijderen
-  const deleteItemHandler = async (id) => {
-    await deleteWord(id);
-    loadWords();
-  };
-
-  // Woord updaten
-  const updateItemHandler = async (id) => {
-    const original = allWords.find((w) => w.id === id);
-    const newWord = editedWords[id] ?? original.word;
-    const newDescriptions = editedDescriptions[id] ?? original.descriptions;
-
-    await updateWord(id, { word: newWord, descriptions: newDescriptions });
-    alert("Woord bijgewerkt!");
-    loadWords();
+  const terug = () => {
+    setSelected(null);
+    setHistory(null);
   };
 
   return (
-    <>
-      <div className="headers bg-white w-screen">
-        <img src={logo} alt="ROC Nijmegen logo" className="roclogo" />
-      </div>
+    <main className="pagina">
+      <section className="admin">
+        <h1 className="admin__titel">admin</h1>
 
-      <div className="diagonal-split">
-        <h1 className="roct">Nieuw woord toevoegen</h1>
-
-        {/* Form om aantal beschrijvingen te kiezen */}
-        <form onSubmit={ChangeDescAmount}>
-          <input
-            className="text-white bg-[#6c6bc4] border-none rounded-2xl p-4 w-60 text-center font-bold"
-            placeholder="Aantal beschrijvingen"
-            name="DescAmount"
-            type="number"
-          />
-          <div className="margintop">
-            <button type="submit">Bevestig aantal</button>
-          </div>
-        </form>
-
-        {/* Form om nieuw woord toe te voegen */}
-        <form onSubmit={addItem}>
-          <input
-            className="text-white bg-[#6c6bc4] border-none rounded-2xl p-4 w-50 text-center font-bold m-2"
-            placeholder="Woord"
-            type="text"
-            name="Word"
-          />
-          {renderNewWordDescriptions()}
-          <div className="margintop">
-            <button type="submit">Voeg woord toe</button>
-          </div>
-        </form>
-
-        {/* Bestaande woorden beheren */}
-        <div className="flex flex-wrap gap-4 justify-center mt-6">
-          {allWords.map((w) => (
-            <div key={w.id} className="wordkaart">
-              {/* Word input */}
-              <input
-                type="text"
-                value={editedWords[w.id] ?? w.word}
-                onChange={(e) =>
-                  setEditedWords({ ...editedWords, [w.id]: e.target.value })
-                }
-                className="font-semibold text-lg mb-2 border-b border-gray-300 w-full text-center focus:outline-none"
-              />
-
-              {/* Beschrijvingen */}
-              {(w.descriptions || []).map((desc, i) => (
-                <input
-                  key={i}
-                  type="text"
-                  value={editedDescriptions[w.id]?.[i] ?? desc}
-                  onChange={(e) => {
-                    const newDesc = [
-                      ...(editedDescriptions[w.id] || w.descriptions),
-                    ];
-                    newDesc[i] = e.target.value;
-                    setEditedDescriptions({
-                      ...editedDescriptions,
-                      [w.id]: newDesc,
-                    });
-                  }}
-                  className="text-sm mb-1 border-b border-gray-300 w-full text-center focus:outline-none"
-                />
-              ))}
-
-              {/* Update & Delete knoppen */}
-              <div className="flex gap-2 mt-2 justify-center">
-                <button onClick={() => updateItemHandler(w.id)}>Update</button>
-                <button onClick={() => deleteItemHandler(w.id)}>
-                  Verwijder
-                </button>
-              </div>
-            </div>
-          ))}
+        <div className="admin__balk">
+          {selected ? (
+            <button type="button" className="link-knop" onClick={terug}>
+              ← Terug
+            </button>
+          ) : (
+            <span />
+          )}
+          <Link to="/admin/woorden" className="link-knop">
+            Woorden beheren
+          </Link>
         </div>
-      </div>
-    </>
+
+        {selected ? (
+          <div className="tabel">
+            <div className="tabel__kop">
+              <span>{selected.name}</span>
+              <span>{dagen(selected.streak)}</span>
+            </div>
+            <div className="tabel__kop">
+              <span>Woord</span>
+              <span>Antwoord</span>
+            </div>
+
+            {history === null && <p className="tabel__leeg">Laden...</p>}
+            {history?.length === 0 && (
+              <p className="tabel__leeg">Nog geen antwoorden.</p>
+            )}
+            {history?.map((item) => (
+              <div
+                key={item.id}
+                className="tabel__rij tabel__rij--antwoord"
+                title={item.correct ? "Goed" : "Fout"}
+              >
+                <span>{item.word}</span>
+                <span>{item.answer}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="tabel__kop tabel__kop--los">
+              <span>Naam</span>
+              <span>Streak</span>
+            </div>
+            <div className="tabel">
+              {users === null && <p className="tabel__leeg">Laden...</p>}
+              {fout && <p className="tabel__leeg">{fout}</p>}
+              {users?.length === 0 && !fout && (
+                <p className="tabel__leeg">Nog geen studenten.</p>
+              )}
+              {users?.map((user) => (
+                <button
+                  key={user.id}
+                  type="button"
+                  className="tabel__rij"
+                  onClick={() => openUser(user)}
+                >
+                  <span>{user.name}</span>
+                  <span>{dagen(user.streak)}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
+    </main>
   );
 }
 

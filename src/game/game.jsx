@@ -1,33 +1,20 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   getWords,
   addCoins,
-  getCoins,
   saveAnswer,
-  getHistory,
+  checkAnswer,
 } from "../services/wordService";
-import { auth } from "../firebase";
-import "../App.css";
-import { db } from "../config/firebase";
-import { collection, getDocs } from "firebase/firestore";
-import logo from "../img/roc-nijmegen-logo-2024.jpg";
 
 function Game() {
   const [allWords, setAllWords] = useState([]);
   const [WordToDescribe, setWordToDescribe] = useState(null);
-  const [coins, setCoins] = useState(0);
-  const [history, setHistory] = useState([]);
-  const navigate = useNavigate();
+  const [answer, setAnswer] = useState("");
+  const [feedback, setFeedback] = useState(null);
+  const [bezig, setBezig] = useState(false);
+  const [geladen, setGeladen] = useState(false);
 
-  // Check of de user is ingelogd
-  useEffect(() => {
-    if (!auth.currentUser) {
-      navigate("/login"); // redirect naar login als niet ingelogd
-    }
-  }, [navigate]);
-
-  // Woorden ophalen, coins en geschiedenis
+  // Woorden ophalen
   useEffect(() => {
     const fetchData = async () => {
       const wordsData = await getWords();
@@ -36,91 +23,95 @@ function Game() {
         setWordToDescribe(
           wordsData[Math.floor(Math.random() * wordsData.length)]
         );
-      const currentCoins = await getCoins();
-      setCoins(currentCoins);
-
-      const historyData = await getHistory();
-      setHistory(historyData);
+      setGeladen(true);
     };
     fetchData();
   }, []);
 
-  // Kies volgend woord
+  // Kies volgend woord (niet hetzelfde woord twee keer achter elkaar)
   const nextWord = () => {
     if (allWords.length === 0) return;
-    const word = allWords[Math.floor(Math.random() * allWords.length)];
+    let word = allWords[Math.floor(Math.random() * allWords.length)];
+    if (allWords.length > 1) {
+      while (word.id === WordToDescribe?.id) {
+        word = allWords[Math.floor(Math.random() * allWords.length)];
+      }
+    }
     setWordToDescribe(word);
   };
 
-  // Check het antwoord en sla op
+  // Check het antwoord en sla op. Je hebt één poging per woord;
+  // daarna wordt het juiste antwoord getoond en komt het volgende woord.
   const CheckIfCorrect = async (e) => {
     e.preventDefault();
-    if (!WordToDescribe || !Array.isArray(WordToDescribe.Descriptions)) return;
+    if (!WordToDescribe || bezig || answer.trim() === "") return;
 
-    const guess = e.target.chosenWord.value.trim().toLowerCase();
-    const descriptions = WordToDescribe.Descriptions.map((d) =>
-      d.toLowerCase()
-    );
-    const isCorrect = descriptions.includes(guess);
+    setBezig(true);
+    const isCorrect = checkAnswer(WordToDescribe, answer);
 
-    // Sla antwoord op in Firebase
-    await saveAnswer(WordToDescribe.Word, guess, isCorrect);
+    // Sla antwoord op in Firebase (werkt ook de streak bij)
+    await saveAnswer(WordToDescribe.word, answer.trim(), isCorrect);
+    if (isCorrect) await addCoins(10);
 
-    // Update geschiedenis
-    const historyData = await getHistory();
-    setHistory(historyData);
+    // Toon feedback met het juiste antwoord van het huidige woord
+    setFeedback({
+      correct: isCorrect,
+      word: WordToDescribe.word,
+      answers: WordToDescribe.descriptions,
+    });
 
-    if (isCorrect) {
-      alert("Goed!");
-      await addCoins(10); // 10 coins toevoegen
-      const updatedCoins = await getCoins();
-      setCoins(updatedCoins);
-      nextWord();
-    } else {
-      alert("Helaas, probeer nog eens!");
-    }
-
-    e.target.chosenWord.value = "";
+    // Altijd door naar het volgende woord
+    nextWord();
+    setAnswer("");
+    setBezig(false);
   };
 
-  if (!WordToDescribe) return <p>Laden...</p>;
+  // Enter = versturen, Shift+Enter = nieuwe regel
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) CheckIfCorrect(e);
+  };
 
   return (
-    <>
-      <div id="Header">
-        <img src={logo} alt="ROC Nijmegen logo" />
-      </div>
-      <div id="GameContainer">
-        <div id="WordContainer">
-          <p id="WordToDescribe">{WordToDescribe.word}</p>
-        </div>
-        <p>Coins: {coins}</p>
+    <main className="pagina">
+      <h1 className="pagina-titel">Leg het volgende woord uit:</h1>
 
-        <form onSubmit={CheckIfCorrect}>
-          <input
-            type="text"
-            name="chosenWord"
-            id="WordInput"
-            autoComplete="off"
-          />
-          <button type="submit">Guess</button>
-        </form>
-
-        <h2>Jouw antwoorden</h2>
-        {history.length === 0 ? (
-          <p>Je hebt nog geen woorden geraden.</p>
-        ) : (
-          <ul>
-            {history.map((item, index) => (
-              <li key={index}>
-                <strong>{item.word}</strong> — {item.answer}{" "}
-                {item.correct ? "✅" : "❌"}
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="kaart woordkaart">
+        {WordToDescribe
+          ? WordToDescribe.word
+          : geladen ? "Geen woorden gevonden" : "Laden..."}
       </div>
-    </>
+
+      <form className="kaart invoerkaart" onSubmit={CheckIfCorrect}>
+        <label className="invoerkaart__kop" htmlFor="beschrijving">
+          type uw woord beschrijving
+        </label>
+        <textarea
+          id="beschrijving"
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          onKeyDown={handleKeyDown}
+          autoComplete="off"
+          autoFocus
+        />
+      </form>
+
+      <button
+        type="button"
+        className="knop"
+        onClick={CheckIfCorrect}
+        disabled={bezig || !WordToDescribe || answer.trim() === ""}
+      >
+        Verstuur
+      </button>
+
+      {feedback && (
+        <p className={`feedback ${feedback.correct ? "feedback--goed" : "feedback--fout"}`}>
+          {feedback.correct ? "Goed!" : "Helaas!"} Het woord{" "}
+          <strong>{feedback.word}</strong> betekent:{" "}
+          {feedback.answers.join(", ")}
+        </p>
+      )}
+    </main>
   );
 }
 

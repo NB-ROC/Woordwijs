@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { onAuthStateChanged, signOut, getIdTokenResult } from "firebase/auth";
 import { auth } from "../firebase";
+import { saveUserProfile } from "../services/wordService";
 
 const AuthContext = createContext();
 
@@ -13,6 +14,7 @@ export const AuthProvider = ({ children }) => {
       if (currentUser) {
         const tokenResult = await getIdTokenResult(currentUser);
         setUser({ ...currentUser, claims: tokenResult.claims });
+        saveUserProfile(currentUser);
       } else {
         setUser(null);
       }

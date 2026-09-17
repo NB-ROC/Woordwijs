@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Woordwijs Oefening</title>
+    <link rel="stylesheet" href="oefening.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <img class="logo" id="logo" alt="ROC Nijmegen" />
+    </header>
+
+    <main class="pagina">
+      <p class="uitgelogd" id="uitgelogd" hidden>
+        Je bent niet ingelogd. Log in via het extensie-icoon in de werkbalk.
+      </p>
+
+      <h1 class="pagina-titel">Leg het volgende woord uit:</h1>
+
+      <div class="kaart woordkaart" id="woord">&hellip;</div>
+
+      <form class="kaart invoerkaart" id="invoer">
+        <label class="invoerkaart__kop" for="antwoord">type uw woord beschrijving</label>
+        <textarea id="antwoord" autocomplete="off"></textarea>
+      </form>
+
+      <div class="acties">
+        <button type="button" class="knop knop--licht" id="sluiten">Sluiten</button>
+        <button type="submit" class="knop" form="invoer" id="verstuur">Verstuur</button>
+      </div>
+
+      <p class="feedback" id="feedback"></p>
+    </main>
+
+    <script type="module" src="./oefening.js"></script>
+  </body>
+</html>

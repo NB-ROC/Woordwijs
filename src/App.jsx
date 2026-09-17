@@ -1,6 +1,7 @@
 import Game from "./game/game";
 import Admin from "./admin/admin";
-import Login from "./auth/login";
+import Words from "./admin/words";
+import Login from "./auth/Login";
 import Header from "./components/Header";
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./auth/ProtectedRoute";
@@ -29,6 +30,15 @@ function App() {
           element={
             <AdminRoute>
               <Admin />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/woorden"
+          element={
+            <AdminRoute>
+              <Words />
             </AdminRoute>
           }
         />

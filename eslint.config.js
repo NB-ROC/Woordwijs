@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'dist-extension'] },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -28,6 +28,13 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+    },
+  },
+  {
+    // Chrome-extensie: geeft toegang tot de chrome.* extension-API's.
+    files: ['extension/woorden-oefening/**/*.js'],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.webextensions },
     },
   },
 ]
