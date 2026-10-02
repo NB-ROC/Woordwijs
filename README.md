@@ -1,8 +1,9 @@
 # Woordwijs
 
 Woordwijs is een woordenspel voor studenten van ROC Nijmegen. Een student krijgt
-een woord te zien en legt uit wat het betekent. Docenten zien op de admin-pagina
-per student de streak en alle gegeven antwoorden.
+een woord te zien en legt uit wat het betekent. Studenten verdienen punten met
+goede antwoorden. Docenten zien op de admin-pagina per student de streak, de
+punten en alle gegeven antwoorden.
 
 Het project bestaat uit twee onderdelen die **dezelfde Firebase-database en
 hetzelfde account** gebruiken:
@@ -51,11 +52,12 @@ De website draait dan op http://localhost:5173.
 |---|---|---|
 | `/` | iedereen | Inloggen |
 | `/game` | ingelogd | "Leg het volgende woord uit": typ een beschrijving en druk op Enter (Shift+Enter voor een nieuwe regel) |
-| `/admin` | admin | Tabel met alle studenten en hun streak. Klik op een student om diens woorden en antwoorden te zien |
+| `/punten` | ingelogd | Mijn punten: totaal, aantal goed/fout, streak en laatste antwoorden |
+| `/admin` | admin | Tabel met alle studenten, hun streak en punten. Klik op een student om diens woorden en antwoorden te zien |
 | `/admin/woorden` | admin | Woorden toevoegen, bewerken en verwijderen |
 
-Via de knop **Mijn ROC** rechtsboven kom je bij Oefenen, Admin, Woorden beheren
-en Uitloggen.
+Rechtsboven staat je aantal punten (klik erop voor *Mijn punten*). Via de knop
+**Mijn ROC** kom je bij Oefenen, Mijn punten, Admin, Woorden beheren en Uitloggen.
 
 ## Chrome-extensie
 
@@ -84,7 +86,7 @@ Na een wijziging in de code: opnieuw `npm run build:extension` en in
 
 Klik op het extensie-icoon voor het menu:
 
-- **Streak en coins** van je account
+- **Streak en punten** van je account
 - **Oefen nu** opent meteen het oefenvenster
 - **Hoe vaak een pop-up?** van elke 10 minuten tot 1x per dag
 - **Laatste antwoorden** en **Uitloggen**
@@ -97,7 +99,7 @@ Op het ingestelde interval opent het oefenvenster vanzelf, met een melding.
 |---|---|
 | `public/manifest.json` | Manifest V3: rechten `alarms`, `notifications`, `storage` |
 | `public/background.js` | Service worker: timer (`chrome.alarms`) die het oefenvenster opent |
-| `popup.html/js/css` | Menu onder het extensie-icoon: login, streak, coins, instellingen |
+| `popup.html/js/css` | Menu onder het extensie-icoon: login, streak, punten, instellingen |
 | `oefening.html/js/css` | Oefenvenster, zelfde spel als `/game`; toont een inlogformulier als je niet bent ingelogd |
 | `login.js` | Inlogformulier, gedeeld door popup en oefenvenster |
 | `vite.config.js` | Bouwt de extensie naar `dist-extension/` en gebruikt `firebase/auth/web-extension` |
@@ -113,7 +115,8 @@ het pop-up-interval wordt lokaal opgeslagen (`chrome.storage.local`).
   *aanvaarden* met beschrijvingen `accepteren`, `goedkeuren` is
   "iets accepteren wat je krijgt" goed.
 - **Eén poging per woord:** daarna zie je het juiste antwoord en komt het volgende woord.
-- **Coins:** 10 per goed antwoord.
+- **Punten:** 10 per goed antwoord. Je ziet ze rechtsboven in de header en op
+  de pagina *Mijn punten*. In Firestore staan ze in het veld `coins`.
 - **Streak:** het aantal dagen achter elkaar dat een student minstens één antwoord
   heeft gegeven. Wie vandaag of gisteren nog heeft geoefend, houdt zijn streak;
   anders telt hij als 0.
@@ -133,7 +136,7 @@ Words/{id}
 users/{uid}
   name: string          # displayName of email
   email: string
-  coins: number
+  coins: number         # punten
   streak: number
   lastPlayed: string    # "YYYY-MM-DD", laatste dag met een antwoord
 
@@ -184,7 +187,8 @@ src/
   auth/                     login, AuthContext, beveiligde routes
   components/Header.jsx     header met "Mijn ROC"-menu
   game/game.jsx             het spel
-  admin/admin.jsx           studentenoverzicht met streaks
+  game/punten.jsx           pagina Mijn punten
+  admin/admin.jsx           studentenoverzicht met streaks en punten
   admin/words.jsx           woordenbeheer
   img/                      ROC-logo
 extension/woorden-oefening/

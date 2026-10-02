@@ -2,7 +2,7 @@
 //
 // Zelfde spel als op de website (src/game/game.jsx): een woord uit Firestore
 // tonen, één poging om het uit te leggen, daarna het juiste antwoord tonen en
-// automatisch door naar het volgende woord. Antwoorden, coins en streak lopen
+// automatisch door naar het volgende woord. Antwoorden, punten en streak lopen
 // via dezelfde services als de website, dus alles is gedeeld met je
 // Woordwijs-account en zichtbaar op de admin-pagina.
 import { onAuthStateChanged } from "firebase/auth";
@@ -13,6 +13,7 @@ import {
   saveAnswer,
   checkAnswer,
   saveUserProfile,
+  PUNTEN_PER_GOED,
 } from "../../src/services/wordService.js";
 import logo from "../../src/img/roc-nijmegen-logo-2024.jpg";
 import { koppelLogin } from "./login.js";
@@ -62,11 +63,13 @@ async function verstuur() {
 
   // Sla antwoord op in Firebase (zelfde geschiedenis en streak als de website)
   await saveAnswer(huidigWoord.word, antwoord, isJuist);
-  if (isJuist) await addCoins(10);
+  if (isJuist) await addCoins(PUNTEN_PER_GOED);
 
   const feedback = $("feedback");
   feedback.className = `feedback ${isJuist ? "feedback--goed" : "feedback--fout"}`;
-  feedback.textContent = `${isJuist ? "Goed!" : "Helaas!"} Het woord "${
+  feedback.textContent = `${
+    isJuist ? `Goed! +${PUNTEN_PER_GOED} punten.` : "Helaas!"
+  } Het woord "${
     huidigWoord.word
   }" betekent: ${huidigWoord.descriptions.join(", ")}`;
 

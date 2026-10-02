@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { volgPunten } from "../services/wordService";
 import logo from "../img/roc-nijmegen-logo-2024.jpg";
 
 export default function Header() {
@@ -8,6 +9,18 @@ export default function Header() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const [punten, setPunten] = useState(null);
+
+  // Punten live bijhouden zolang iemand is ingelogd
+  const uid = user?.uid;
+  useEffect(() => {
+    if (!uid) return;
+    const stop = volgPunten(uid, setPunten);
+    return () => {
+      stop();
+      setPunten(null);
+    };
+  }, [uid]);
 
   // Menu sluiten bij klikken buiten het menu
   useEffect(() => {
@@ -36,6 +49,16 @@ export default function Header() {
 
       {user && (
         <div className="mijn-roc" ref={menuRef}>
+          {punten !== null && (
+            <button
+              type="button"
+              className="punten-badge"
+              title="Mijn punten"
+              onClick={() => ga("/punten")}
+            >
+              ★ {punten} punten
+            </button>
+          )}
           <button
             type="button"
             className="pill"
@@ -50,6 +73,9 @@ export default function Header() {
               <span className="mijn-roc__email">{user.email}</span>
               <button type="button" className="mijn-roc__item" onClick={() => ga("/game")}>
                 Oefenen
+              </button>
+              <button type="button" className="mijn-roc__item" onClick={() => ga("/punten")}>
+                Mijn punten
               </button>
               {user.claims?.admin && (
                 <>

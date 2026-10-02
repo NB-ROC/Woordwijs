@@ -66,6 +66,25 @@ textarea {
 
 .mijn-roc {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.punten-badge {
+  border: none;
+  border-radius: 999px;
+  background: var(--roc-lavendel);
+  color: var(--roc-paars);
+  padding: 0.3rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.punten-badge:hover {
+  background: var(--roc-grijs);
 }
 
 .pill {
@@ -352,6 +371,60 @@ textarea {
   color: #2e7d32;
 }
 
+/* ==================== Mijn punten ==================== */
+.puntenkaart {
+  width: min(310px, 100%);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 600;
+}
+
+.puntenkaart__getal {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--roc-lila);
+}
+
+.stats {
+  width: min(600px, 100%);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stats__vak {
+  padding: 0.9rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.stats__getal {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.tabel--laag {
+  min-height: 0;
+}
+
+.tabel__rij--goed {
+  color: #2e7d32;
+}
+
+.tabel__rij--fout {
+  color: #b3261e;
+}
+
+a.knop {
+  text-decoration: none;
+}
+
 /* ==================== Admin-tabel ==================== */
 .admin {
   width: min(600px, 100%);
@@ -411,6 +484,19 @@ textarea {
 
 button.tabel__rij {
   cursor: pointer;
+}
+
+/* Tabel met drie kolommen (naam, streak, punten) */
+.tabel--drie {
+  background:
+    linear-gradient(var(--roc-lijn), var(--roc-lijn)) 33.333% 0 / 1px 100% no-repeat,
+    linear-gradient(var(--roc-lijn), var(--roc-lijn)) 66.667% 0 / 1px 100% no-repeat,
+    var(--roc-grijs);
+}
+
+.tabel--drie .tabel__rij,
+.tabel__kop--drie {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 button.tabel__rij:hover,

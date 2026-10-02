@@ -1,7 +1,7 @@
 // popup.js — menu onder het werkbalkpictogram.
 //
 // Gebruikt dezelfde Firebase-auth en dezelfde services als de website, zodat
-// login, coins en geschiedenis altijd gelijk zijn aan woordwijs.nl.
+// login, punten en geschiedenis altijd gelijk zijn aan woordwijs.nl.
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../src/firebase.js";
 import {

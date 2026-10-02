@@ -4,6 +4,7 @@ import {
   addCoins,
   saveAnswer,
   checkAnswer,
+  PUNTEN_PER_GOED,
 } from "../services/wordService";
 
 function Game() {
@@ -51,7 +52,7 @@ function Game() {
 
     // Sla antwoord op in Firebase (werkt ook de streak bij)
     await saveAnswer(WordToDescribe.word, answer.trim(), isCorrect);
-    if (isCorrect) await addCoins(10);
+    if (isCorrect) await addCoins(PUNTEN_PER_GOED);
 
     // Toon feedback met het juiste antwoord van het huidige woord
     setFeedback({
@@ -106,7 +107,7 @@ function Game() {
 
       {feedback && (
         <p className={`feedback ${feedback.correct ? "feedback--goed" : "feedback--fout"}`}>
-          {feedback.correct ? "Goed!" : "Helaas!"} Het woord{" "}
+          {feedback.correct ? `Goed! +${PUNTEN_PER_GOED} punten.` : "Helaas!"} Het woord{" "}
           <strong>{feedback.word}</strong> betekent:{" "}
           {feedback.answers.join(", ")}
         </p>

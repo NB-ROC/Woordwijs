@@ -1,4 +1,5 @@
 import Game from "./game/game";
+import Punten from "./game/punten";
 import Admin from "./admin/admin";
 import Words from "./admin/words";
 import Login from "./auth/Login";
@@ -21,6 +22,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Game />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/punten"
+          element={
+            <ProtectedRoute>
+              <Punten />
             </ProtectedRoute>
           }
         />

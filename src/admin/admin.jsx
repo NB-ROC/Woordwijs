@@ -1,4 +1,4 @@
-// Admin.jsx — overzicht van studenten met hun streak. Klik op een student
+// Admin.jsx — overzicht van studenten met hun streak en punten. Klik op een student
 // om diens woorden en antwoorden te zien.
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -60,7 +60,9 @@ function Admin() {
           <div className="tabel">
             <div className="tabel__kop">
               <span>{selected.name}</span>
-              <span>{dagen(selected.streak)}</span>
+              <span>
+                {dagen(selected.streak)} · {selected.punten} punten
+              </span>
             </div>
             <div className="tabel__kop">
               <span>Woord</span>
@@ -84,11 +86,12 @@ function Admin() {
           </div>
         ) : (
           <>
-            <div className="tabel__kop tabel__kop--los">
+            <div className="tabel__kop tabel__kop--los tabel__kop--drie">
               <span>Naam</span>
               <span>Streak</span>
+              <span>Punten</span>
             </div>
-            <div className="tabel">
+            <div className="tabel tabel--drie">
               {users === null && <p className="tabel__leeg">Laden...</p>}
               {fout && <p className="tabel__leeg">{fout}</p>}
               {users?.length === 0 && !fout && (
@@ -103,6 +106,7 @@ function Admin() {
                 >
                   <span>{user.name}</span>
                   <span>{dagen(user.streak)}</span>
+                  <span>{user.punten}</span>
                 </button>
               ))}
             </div>

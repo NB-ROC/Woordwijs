@@ -11,7 +11,8 @@ import {
   setDoc,
   query,
   orderBy,
-  serverTimestamp
+  serverTimestamp,
+  onSnapshot
 } from "firebase/firestore";
 
 // ==================== Woorden ====================
@@ -44,9 +45,12 @@ export const updateWord = async (id, data) => {
   await updateDoc(doc(db, "Words", id), data);
 };
 
-// ==================== Coins (per gebruiker) ====================
-// Coins worden opgeslagen op het document van de ingelogde gebruiker
-// (users/{uid}.coins), zodat iedere speler zijn eigen saldo heeft.
+// ==================== Punten (per gebruiker) ====================
+// Punten worden opgeslagen op het document van de ingelogde gebruiker
+// (users/{uid}.coins), zodat iedere speler zijn eigen saldo heeft. Het veld
+// heet nog "coins" zodat eerder verdiende punten blijven staan.
+export const PUNTEN_PER_GOED = 10;
+
 export const getCoins = async () => {
   const user = auth.currentUser;
   if (!user) return 0;
@@ -56,6 +60,14 @@ export const getCoins = async () => {
   if (!snap.exists()) return 0;
   return snap.data().coins || 0;
 };
+
+// Luistert live naar de punten van een gebruiker; geeft een stop-functie terug.
+export const volgPunten = (uid, callback) =>
+  onSnapshot(
+    doc(db, "users", uid),
+    (snap) => callback(snap.exists() ? snap.data().coins || 0 : 0),
+    (err) => console.error("Fout bij volgen punten:", err)
+  );
 
 export const addCoins = async (amount) => {
   try {
@@ -175,7 +187,7 @@ export const getHistory = async () => {
 
 // ==================== Admin ====================
 
-// Alle studenten met hun huidige streak, gesorteerd op naam
+// Alle studenten met hun huidige streak en punten, gesorteerd op naam
 export const getUsers = async () => {
   const snapshot = await getDocs(collection(db, "users"));
   return snapshot.docs
@@ -185,6 +197,7 @@ export const getUsers = async () => {
         id: d.id,
         name: data.name || data.email || d.id,
         streak: currentStreak(data),
+        punten: data.coins || 0,
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name, "nl"));
